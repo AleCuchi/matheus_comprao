@@ -12,7 +12,6 @@ load_dotenv()
 from_address = "sms.matheus.mercadao@gmail.com"
 to_address = " matheusjmonteiro@hotmail.com"
 NUMERO_DE_NOTIFICACOES = 3
-# Create message container - the correct MIME type is multipart/alternative.
 
 
 def main():
