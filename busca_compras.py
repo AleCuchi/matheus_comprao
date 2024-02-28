@@ -37,7 +37,8 @@ def main():
         ordens = ordens.get("orders")
         if req.status_code == 429:
             sleep(120)
-        if req.status_code == 404:
+        if req.status_code >= 400:
+            print("Erro : ", req.status_code)
             break
         if ordens is None or len(ordens) == 0:
             print(f"Sem ordens, {datetime.now().strftime('%H:%M:%S')}")
