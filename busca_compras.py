@@ -17,7 +17,7 @@ NUMERO_DE_NOTIFICACOES = 3
 def main():
     print()
     keyToken = os.getenv("TOKEN","")
-    print("KeyToken", keyToken)
+
     data = datetime.now()
     url = f"https://admin.mercadao.pt/api/shoppers/orders/available?deliveryFrom={data.strftime('%Y-%m-%d')}T00:00:00.000Z&limit=10"
 
