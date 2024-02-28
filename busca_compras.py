@@ -5,14 +5,20 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from_address = "sms.matheus.mercadao@gmail.com"
 to_address = " matheusjmonteiro@hotmail.com"
 NUMERO_DE_NOTIFICACOES = 3
 # Create message container - the correct MIME type is multipart/alternative.
 
+
 def main():
-    keyToken= os.getenv("TOKEN","")
+    print()
+    keyToken = os.getenv("TOKEN","")
+    print("KeyToken", keyToken)
     data = datetime.now()
     url = f"https://admin.mercadao.pt/api/shoppers/orders/available?deliveryFrom={data.strftime('%Y-%m-%d')}T00:00:00.000Z&limit=10"
 
@@ -22,10 +28,11 @@ def main():
         headers={
             "Authorization": keyToken
         }
+        req=None
         try:
             req = requests.get(url,headers=headers)
         except ValueError  as e:
-            print(f"Error: {e}, StatusCode:{req.status_code}")
+            print(f"Error: {e}, StatusCode: {req.status_code}")
             sleep(3)
         ordens = req.json()
         ordens = ordens.get("orders")
@@ -33,7 +40,7 @@ def main():
             sleep(120)
         if req.status_code == 404:
             break
-        if(ordens is None or len(ordens) == 0):
+        if ordens is None or len(ordens) == 0:
             print(f"Sem ordens, {datetime.now().strftime('%H:%M:%S')}")
             continue        
 
@@ -79,4 +86,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("Iniciando...")
     main()
