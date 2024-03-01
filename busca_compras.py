@@ -25,6 +25,7 @@ def main():
 
     while True:
         sleep(10)
+        print("Rodando")
         data = datetime.now()
         url = ("https://admin.mercadao.pt/api/shoppers/orders/"
                f"available?deliveryFrom={data.strftime('%Y-%m-%d')}"
@@ -48,7 +49,7 @@ def main():
         ordens = req.json()
         ordens = ordens.get("orders")
         if ordens is None or len(ordens) == 0:
-            print(f"Sem ordens, {datetime.now().strftime('%H:%M:%S')}")
+            print(f"Sem ordens, {data.strftime('%H:%M:%S')}")
             continue        
 
         for ordem in ordens:
