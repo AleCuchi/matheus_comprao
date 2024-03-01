@@ -16,30 +16,37 @@ NUMERO_DE_NOTIFICACOES = 3
 
 def main():
     print()
-    keyToken = os.getenv("TOKEN","")
+    keyToken = os.getenv("TOKEN", "")
 
-    data = datetime.now()
-    url = f"https://admin.mercadao.pt/api/shoppers/orders/available?deliveryFrom={data.strftime('%Y-%m-%d')}T00:00:00.000Z&limit=10"
+    username = os.getenv("EMAIL")
+    password = os.getenv("PASSWORD")
 
-    ordens_informadas=[]
+    ordens_informadas = []
+
     while True:
         sleep(10)
-        headers={
+        data = datetime.now()
+        url = ("https://admin.mercadao.pt/api/shoppers/orders/"
+               f"available?deliveryFrom={data.strftime('%Y-%m-%d')}"
+               "T00:00:00.000Z&limit=10")
+        headers = {
             "Authorization": keyToken
         }
-        req=None
+        req = None
         try:
-            req = requests.get(url,headers=headers)
-        except ValueError  as e:
+            req = requests.get(url, headers=headers)
+        except ValueError as e:
             print(f"Error: {e}, StatusCode: {req.status_code}")
             sleep(3)
-        ordens = req.json()
-        ordens = ordens.get("orders")
+
         if req.status_code == 429:
             sleep(120)
-        if req.status_code >= 400:
+            continue
+        if req.status_code == 401:
             print("Erro : ", req.status_code)
             break
+        ordens = req.json()
+        ordens = ordens.get("orders")
         if ordens is None or len(ordens) == 0:
             print(f"Sem ordens, {datetime.now().strftime('%H:%M:%S')}")
             continue        
@@ -62,28 +69,18 @@ def main():
             Existe uma compra em espera com o nome {ordem["pickingLocationName"]}
             """
 
-            # Record the MIME type - text/html.
             part1 = MIMEText(html, 'html')
 
-            # Attach parts into message container
             msg.attach(part1)
 
-            # Credentials
-            username = 'sms.matheus.mercadao@gmail.com'
-            password = 'yxma gjpk fshd deqk'
-
-            # Sending the email
-            ## note - this smtp config worked for me, I found it googling around, you may have to tweak the # (587) to get yours to work
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.ehlo()
             server.starttls()
             server.login(username, password)
             server.sendmail(from_address, to_address, msg.as_string())
             server.quit()
-            print("Email Enviado")
+            print(f"Email Enviado, {datetime.now().strftime('%H:%M:%S')}")
         
-
-
 
 if __name__ == "__main__":
     print("Iniciando...")
