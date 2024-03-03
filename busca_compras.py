@@ -46,9 +46,9 @@ def main():
             logging.debug(f"headers: {headers}")
             logging.debug(f"url: {url}")
             req = requests.get(url, headers=headers)
-            logging.debug(req.status_code)
+            logging.debug(f"{req.status_code}")
         except ValueError as e:
-            print(f"Error: {e}, StatusCode: {req.status_code}")
+            print(f"Erro ao requisitar")
             logging.debug(f"Error: {e}, StatusCode: {req.status_code}")
             sleep(3)
         logging.info(f"Retorno Requisição: {req.status_code}, {req.text}")
@@ -57,6 +57,7 @@ def main():
             sleep(120)
             continue
         if req.status_code == 401:
+            print("Falha de autenticação: Avisar o Alexandre")
             logging.debug("Requisição com falha de autenticação")
             break
         ordens = req.json()
