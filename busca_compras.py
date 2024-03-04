@@ -54,6 +54,7 @@ def main():
         logging.info(f"Retorno Requisição: {req.status_code}, {req.text}")
         if req.status_code == 429:
             logging.debug("Requisição com muitas tentativas")
+            print("Muitas tentativas, aguardando 2 Minutos")
             sleep(120)
             continue
         if req.status_code == 401:
