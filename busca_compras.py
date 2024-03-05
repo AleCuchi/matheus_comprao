@@ -26,8 +26,8 @@ def verifica_ordens(ordens, historico):
         if len([i for i in historico if i == ordem.get("pickingLocationName")]) >= NUMERO_DE_NOTIFICACOES:
             continue
         else:
-            return True
-    return False
+            return False
+    return True
 
 
 def main():
