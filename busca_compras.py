@@ -19,6 +19,17 @@ logging.basicConfig(
     format="%(asctime)s; %(msecs)d; %(levelname)s; %(message)s;",
     level=logging.DEBUG
 )
+
+
+def verifica_ordens(ordens, historico):
+    for ordem in ordens:
+        if len([i for i in historico if i == ordem.get("pickingLocationName")]) >= NUMERO_DE_NOTIFICACOES:
+            continue
+        else:
+            return True
+    return False
+
+
 def main():
     logging.info("Iniciando o programa")
     keyToken = os.getenv("TOKEN", "")
@@ -64,7 +75,7 @@ def main():
         ordens = req.json()
         ordens = ordens.get("orders")
         logging.debug(f"Ordems encontradas: {ordens}")
-        if ordens is None or len(ordens) == 0:
+        if ordens is None or verifica_ordens(ordens, ordens_informadas):
             print(f"Sem ordens, {data.strftime('%H:%M:%S')}")
             continue        
         logging.info("Inicio do envio de ordens")
@@ -73,6 +84,7 @@ def main():
             if len([i for i in ordens_informadas if i == ordem.get("pickingLocationName")]) >= NUMERO_DE_NOTIFICACOES:
                 logging.info(f"Já foi enviado {NUMERO_DE_NOTIFICACOES} notificações "
                              f"para o pedido: {ordem.get('pickingLocationName')}")
+
                 continue
 
             ordens_informadas.append(ordem.get("pickingLocationName"))
