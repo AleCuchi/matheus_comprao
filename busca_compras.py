@@ -14,7 +14,7 @@ to_address = " matheusjmonteiro@hotmail.com"
 NUMERO_DE_NOTIFICACOES = 3
 
 logging.basicConfig(
-    filename="./log.csv",
+    filename=f"./log-{datetime.now().strftime('%d-%m-%Y')}.csv",
     filemode="a",
     format="%(asctime)s; %(msecs)d; %(levelname)s; %(message)s;",
     level=logging.DEBUG
