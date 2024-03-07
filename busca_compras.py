@@ -13,7 +13,7 @@ from_address = "sms.matheus.mercadao@gmail.com"
 to_address = " matheusjmonteiro@hotmail.com"
 NUMERO_DE_NOTIFICACOES = 3
 
-if os.path.exists("./logs"):
+if not os.path.exists("./logs"):
     os.makedirs("logs")
 
 logging.basicConfig(
