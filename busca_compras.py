@@ -13,8 +13,11 @@ from_address = "sms.matheus.mercadao@gmail.com"
 to_address = " matheusjmonteiro@hotmail.com"
 NUMERO_DE_NOTIFICACOES = 3
 
+if os.path.exists("./logs"):
+    os.makedirs("logs")
+
 logging.basicConfig(
-    filename=f"./log-{datetime.now().strftime('%d-%m-%Y')}.csv",
+    filename=f"./logs/log-{datetime.now().strftime('%d-%m-%Y')}.csv",
     filemode="a",
     format="%(asctime)s; %(msecs)d; %(levelname)s; %(message)s;",
     level=logging.DEBUG
