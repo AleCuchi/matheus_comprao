@@ -63,31 +63,35 @@ def main():
             logging.debug(f"{req.status_code}")
         except ValueError as e:
             print(f"Erro ao requisitar")
-            logging.debug(f"Error: {e}, StatusCode: {req.status_code}")
+            logging.error(f"Error: {e}, StatusCode: {req.status_code}")
             sleep(3)
+            continue
+
         logging.info(f"Retorno Requisição: {req.status_code}, {req.text}")
         if req.status_code == 429:
-            logging.debug("Requisição com muitas tentativas")
+            logging.error("Requisição com muitas tentativas")
             print("Muitas tentativas, aguardando 2 Minutos")
             sleep(120)
             continue
+
         if req.status_code == 401:
             print("Falha de autenticação: Avisar o Alexandre")
-            logging.debug("Requisição com falha de autenticação")
+            logging.error("Requisição com falha de autenticação")
             break
+
         ordens = req.json()
         ordens = ordens.get("orders")
         logging.debug(f"Ordems encontradas: {ordens}")
         if ordens is None or verifica_ordens(ordens, ordens_informadas):
             print(f"Sem ordens, {data.strftime('%H:%M:%S')}")
-            continue        
+            continue
+
         logging.info("Inicio do envio de ordens")
         for ordem in ordens:
             
             if len([i for i in ordens_informadas if i == ordem.get("pickingLocationName")]) >= NUMERO_DE_NOTIFICACOES:
                 logging.info(f"Já foi enviado {NUMERO_DE_NOTIFICACOES} notificações "
                              f"para o pedido: {ordem.get('pickingLocationName')}")
-
                 continue
 
             ordens_informadas.append(ordem.get("pickingLocationName"))
@@ -116,8 +120,8 @@ def main():
 
             except ValueError as e:
                 print("Erro no envio de e-mails")
-                logging.info("Erro no envio do e-mail.")
-                logging.info(e)
+                logging.error("Erro no envio do e-mail.")
+                logging.error(e)
             print(f"Email Enviado, {datetime.now().strftime('%H:%M:%S')}")
 
 
