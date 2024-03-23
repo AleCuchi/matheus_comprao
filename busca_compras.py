@@ -46,7 +46,7 @@ def main():
 
     while True:
         logging.info("Before Sleep")
-        sleep(7)
+        sleep(10)
         data = datetime.now()
         url = ("https://admin.mercadao.pt/api/shoppers/orders/"
                f"available?deliveryFrom={data.strftime('%Y-%m-%d')}"
