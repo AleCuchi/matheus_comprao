@@ -24,14 +24,27 @@ logging.basicConfig(
 )
 
 
-def verifica_ordens(ordens, historico):
+def existem_novas_ordens(ordens, historico):
+    """
+    Função para verificar se existem ordens novas não notificadas
+    :param ordens: Lista com as ordens
+    :param historico: Histórico de ordens notificadas
+    :return: Verdadeiro se existem ordens que não foram notificadas
+    """
     for ordem in ordens:
-        if len([i for i in historico if i == ordem.get("pickingLocationName")]) >= NUMERO_DE_NOTIFICACOES:
-            continue
-        else:
-            return False
-    return True
+        if ordem_eh_nova(ordem, historico):
+           return True
+    return False
 
+
+def ordem_eh_nova(ordem, historico):
+    """
+    Checa se uma ordem é nova
+    :param ordem: Ordem a ser verificada
+    :param historico: histórico de ordens existentes
+    :return: Retorna True se a ordem for nova.
+    """
+    return len([i for i in historico if i == ordem.get("pickingLocationName")]) <= NUMERO_DE_NOTIFICACOES
 
 def main():
     logging.info("Iniciando o programa")
@@ -45,7 +58,6 @@ def main():
     ordens_informadas = []
 
     while True:
-        logging.info("Before Sleep")
         sleep(7)
         data = datetime.now()
         url = ("https://admin.mercadao.pt/api/shoppers/orders/"
@@ -57,10 +69,9 @@ def main():
         req = None
         try:
             logging.info("Before Request")
-            logging.debug(f"headers: {headers}")
             logging.debug(f"url: {url}")
             req = requests.get(url, headers=headers)
-            logging.debug(f"{req.status_code}")
+            logging.debug(f"After request - StatusCode: {req.status_code}")
         except ValueError as e:
             print(f"Erro ao requisitar")
             logging.error(f"Error: {e}, StatusCode: {req.status_code}")
@@ -75,21 +86,20 @@ def main():
             continue
 
         if req.status_code == 401:
-            print("Falha de autenticação: Avisar o Alexandre")
+            print("Falha de autenticação: Renovar o Token")
             logging.error("Requisição com falha de autenticação")
             break
 
         ordens = req.json()
         ordens = ordens.get("orders")
         logging.debug(f"Ordems encontradas: {ordens}")
-        if ordens is None or verifica_ordens(ordens, ordens_informadas):
+        if ordens is None or not existem_novas_ordens(ordens, ordens_informadas):
             print(f"Sem ordens, {data.strftime('%H:%M:%S')}")
             continue
 
         logging.info("Inicio do envio de ordens")
         for ordem in ordens:
-            
-            if len([i for i in ordens_informadas if i == ordem.get("pickingLocationName")]) >= NUMERO_DE_NOTIFICACOES:
+            if not ordem_eh_nova(ordem, ordens_informadas):
                 logging.info(f"Já foi enviado {NUMERO_DE_NOTIFICACOES} notificações "
                              f"para o pedido: {ordem.get('pickingLocationName')}")
                 continue
